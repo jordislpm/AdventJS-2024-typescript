@@ -1,35 +1,28 @@
 function drawRace(indices: number[], length: number): string {
     // Code here
 
-    let result:string[] = []
+    let result: string[] = []
     let line = "~".repeat(length)
 
     for (let index = 0; index < indices.length; index++) {
-       let lineCompleted = ''
+        let lineCompleted = ''
         const element = indices[index];
-
         let arrLine = line.split("")
-
-        if (element == 0){
-lineCompleted = `${" ".repeat(Math.abs(indices.length - index -1))}${line} /${index +1}`
+        if (element == 0) {
+            lineCompleted = `${" ".repeat(Math.abs(indices.length - index - 1))}${line} /${index + 1}`
         }
-
-        else if  (element > 0){
-
+        else if (element > 0) {
             arrLine[element] = "r"
-lineCompleted = `${" ".repeat(Math.abs(indices.length - index -1))}${arrLine.join("")} /${index +1}`
-
-        } else if(element < 0) {
-
-           arrLine[length + element] = "r"
-lineCompleted = `${" ".repeat(Math.abs(indices.length - index -1))}${arrLine.join("")} /${index +1}`
+            lineCompleted = `${" ".repeat(Math.abs(indices.length - index - 1))}${arrLine.join("")} /${index + 1}`
+        } else if (element < 0) {
+            arrLine[length + element] = "r"
+            lineCompleted = `${" ".repeat(Math.abs(indices.length - index - 1))}${arrLine.join("")} /${index + 1}`
         }
 
-result.push(lineCompleted)
-     
+        result.push(lineCompleted)
     }
     return result.join("\n")
-  }
+}
 
 //console.log(  drawRace([0, 5, -3], 10));
 /*
