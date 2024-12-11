@@ -27,16 +27,14 @@
 // }
 
 type Inventory = Array<
-  InventoryItem
+  {  name: string;
+    quantity: number;
+    category: string;}
 >
 
-type InventoryItem = {
-  name: string;
-  quantity: number;
-  category: string;
-};
+
 type OrganizedInventory = Record<string, Record<string, number>>;
-function organizeInventory(inventory: InventoryItem[]): OrganizedInventory {
+function organizeInventory(inventory: Inventory): OrganizedInventory {
   return inventory.reduce<OrganizedInventory>((acc, item) => {
     const { name, quantity, category } = item;
 

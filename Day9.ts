@@ -4,55 +4,55 @@ type Movement = 'U' | 'D' | 'R' | 'L'
 type Result = 'none' | 'crash' | 'eat'
 
 function moveTrain(board: string[], mov: Movement): Result {
-  // Code here
+  let result: Result = "none";
+  const train = "@";
 
+  // Mapa de direcciones de movimiento
+  const directions: Record<Movement, [number, number]> = {
+    U: [-1, 0],
+    D: [1, 0],
+    L: [0, -1],
+    R: [0, 1],
+  };
 
-  let arrBoard = board.map((level)=>level.split(""))
-  let arrBoardMoving = structuredClone(arrBoard);
-  console.log(arrBoard)
-
- let result:Result = "none"
- let train = "@"
-    const checkMove = (newPlace): Result=>{
-        if(newPlace == -1) return 'crash'
-         if(newPlace == ".") return 'none'
-          if(newPlace == train) return 'crash'
-           if(newPlace == "*") return 'eat'
-           return "none"
+  // Lógica para validar el movimiento
+  const checkMove = (row: number, col: number): Result => {
+    if (row < 0 || row >= board.length || col < 0 || col >= board[row].length) {
+      return "crash"; // Fuera del tablero
     }
-    const actionMove = (actionMove:Movement)=>{
-        for (let index = 0; index < arrBoard.length; index++) {
-            const level = arrBoard[index];
-            console.log(level)
-            for (let e = 0; e < level.length; e++) {
-                const element = level[e];
-                if (element === train){
-                    if(mov === "U"){
-                        arrBoardMoving[index][e] = arrBoard[index][e]
-                        arrBoardMoving[index -1][e] = train
-                        
-                    } else if(mov === "D"){
-                        arrBoardMoving[index +1][e] = train
-                        arrBoardMoving[index][e] = arrBoard[index][e]
-                    } else if (mov === "L"){
-                        arrBoardMoving[index][e -1] = train
-                        arrBoardMoving[index][e] = arrBoard[index][e]
-                    } else if(mov === "R"){
-                        arrBoardMoving[index][e +1] = train
-                        arrBoardMoving[index][e] = arrBoard[index][e]
-                    }
-                }
-            }
-        }
+    const newPlace = board[row][col];
+    const moveResults: Record<string, Result> = {
+      "·": "none",
+      "o": "crash",
+      "*": "eat",
+    };
+    return moveResults[newPlace] ?? "crash"; // Valor por defecto
+  };
 
+  // Encontrar posición del tren
+  let trainRow = -1, trainCol = -1;
+  board.some((level, rowIndex) => {
+    const colIndex = level.indexOf(train);
+    if (colIndex !== -1) {
+      trainRow = rowIndex;
+      trainCol = colIndex;
+      return true; // Detener búsqueda
     }
+    return false;
+  });
 
-    actionMove(mov)
-    console.log(arrBoard)
-    console.log(arrBoardMoving)
+  // Si no se encuentra el tren, no hay movimiento
+  if (trainRow === -1 || trainCol === -1) return result;
 
-  return 'none';
+  // Calcular nueva posición según la dirección
+  const [rowDelta, colDelta] = directions[mov] || [0, 0];
+  const newRow = trainRow + rowDelta;
+  const newCol = trainCol + colDelta;
 
+  // Validar movimiento
+  result = checkMove(newRow, newCol);
+
+  return result;
 }
 
 const board = ['·····', '*····', '@····', 'o····', 'o····']
@@ -61,14 +61,16 @@ console.log(moveTrain(board, 'U'))
 // ➞ 'eat'
 // Because the train moves up and finds a magical fruit
 
-//console.log(moveTrain(board, 'D'))
+console.log(moveTrain(board, 'D'))
 // ➞ 'crash'
 // The train moves down and the head crashes into itself
 
-//console.log(moveTrain(board, 'L'))
+console.log(moveTrain(board, 'L'))
 // ➞ 'crash'
 // The train moves to the left and crashes into the wall
 
-//console.log(moveTrain(board, 'R'))
+console.log(moveTrain(board, 'R'))
 // ➞ 'none'
 // The train moves to the right and there is empty space on the right
+
+
