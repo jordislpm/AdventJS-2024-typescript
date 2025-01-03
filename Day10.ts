@@ -12,8 +12,7 @@
 // Upon completion, the program should return the content of register A. If A did not have a defined value, it returns undefined.
 
 
-function compile (instructions: string[]): number {
-
+function compile(instructions: string[]): number {
     type Register = Record<string, number>;
     type CommandFunction = () => void;
     interface Commands {
@@ -21,68 +20,72 @@ function compile (instructions: string[]): number {
         INC: (register: string) => void;
         DEC: (index: string, register: string) => void;
     }
-    
-    const registers: Register = {
-    };
-    
+
+    const registers: Register = {};
+
     const commands: Commands = {
         MOV: (value: string, register: string) => {
-            const numValue = Number(value); 
-            console.log(value, register)
+            const numValue = Number(value);
+          
             if (!isNaN(numValue)) {
                 registers[register] = numValue;
-                console.log(registers)
-                console.log(value, register)
+                
             } else {
                 registers[register] = registers[value];
-                console.log(registers[value])
-                console.log(value, register)
+               
             }
-         
         },
-     
+
         INC: (register: string) => {
-            console.log(registers[register])
-            if (registers[register] !== undefined){
-                registers[register] = registers[register] +=1
+            if (registers[register] !== undefined) {
+                registers[register] += 1;
             } else {
-                registers[register] = 0
+                registers[register] = (registers[register] || 0) + 1;
             }
         },
         DEC: (register: string) => {
-            console.log(registers[register])
-            
-            if (registers[register] !== undefined){
-                registers[register] = registers[register] -=1
+
+            if (registers[register] !== undefined) {
+                registers[register] -= 1;
             } else {
-                registers[register] = 0
+                registers[register] = (registers[register] || 0) - 1;
             }
+           
         },
     };
 
-    for (let i = 0; i < instructions.length; i++) {
+    let i = 0;
+    const maxIterations = instructions.length * 10;
+    let iterationCount = 0;
+
+    while (i < instructions.length && iterationCount < maxIterations) {
         const element = instructions[i].split(" ");
 
-        console.log(registers, i)
-        
         if (element[0] === "JMP") {
-            if (registers[element[1]] === 0) {
-                let newIndex = Number(element[2]) - 1;
-        
-                //i = newIndex - 1; 
+            if ((registers[element[1]] || 0) === 0) {
+                let newIndex = Number(element[2]) ;
+                if (newIndex >= 0 && newIndex < instructions.length) {
+                    i = newIndex;
+                } else {
+                    break;
+                }
+            } else {
+                i++;
             }
         } else {
-            console.log(element[0]);
-            commands[element[0]](element[1], element[2] ? element[2] : "");
+            commands[element[0]](element[1], element[2] || '');
+            i++;
         }
-        console.log(registers)
+
+        iterationCount++;
+        if (iterationCount >= maxIterations) {
+            break;
+        }
     }
 
+    return registers.A;
+}
 
-    // Code here
-    console.log()
-    return registers.A
-  }
 
   const instructions = [
     'MOV -1 C', // copies -1 to register 'C',
@@ -92,12 +95,16 @@ function compile (instructions: string[]): number {
     'INC A' // increments the value of register 'A'
   ]
   
-  //console.log(compile(instructions)) // -> 2
+  console.log(compile(instructions)) // -> 2
 
-  console.log(compile(["MOV 5 B", "DEC B", "MOV B A", "INC A"]))
+console.log(compile(["MOV 5 B", "DEC B", "MOV B A", "INC A"])) // 5
 
-  //console.log(compile(["MOV 0 A",  "INC A"]))
+  console.log(compile(["INC A", "INC A", "DEC A", "MOV A B"])) // 1
+
+console.log(compile(["MOV 0 A",  "INC A"])) // 1
   
+    console.log(compile(["MOV 2 X", "DEC X", "DEC X", "JMP X 1", "MOV X A"])) // -2
+
   /**
    Step-by-step execution:
    0: MOV -1 C -> The register C receives the value -1

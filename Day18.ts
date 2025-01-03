@@ -5,39 +5,33 @@ type user = { name: string; address: string, phone: string };
 
 let users: user[] = []
 
-let usersDesorders = agenda.split("\n").forEach((element)=>{
-    let data = element
+agenda.split("\n").forEach((element)=>{
+    
     let newUser:user = {name: "", phone: "", address:""}
-    console.log(element)
     let matchName = element.match(regexName); 
     let matchPhone = element.match(regexNumber); 
+
     if (matchName){
         let name = matchName[0];
-        agenda = data.replace(name, "").trim();
-        newUser.name = name;
-        console.log(data)
+        element = element.replace(name, "").trim();
+        newUser.name = name.replace(/[<>]/g, '');;
     }
     if (matchPhone){
         let phone = matchPhone[0];
-        agenda = data.replace(phone, "").trim();
+        element = element.replace(phone, "").trim();
         newUser.phone = phone;
     }
-console.log(data)
-    console.log( matchName, matchPhone)
+
+newUser.address = element;
 users.push(newUser)
-
-
 
 })
 
+let userPicked = users.filter((us)=>us.phone.includes(phone))
 
- 
-
-
-
-
-
-console.log(users)
+if (userPicked.length === 1){
+    return {name: userPicked[0].name, address:userPicked[0].address}
+}
 
     return null
       }
@@ -50,14 +44,14 @@ Plaza Mayor 45 Madrid 28013 <Maria Gomez> +34-600-987-654
 console.log(findInAgenda(agenda, '34-600-123-456'))
 // { name: "Juan Perez", address: "Calle Gran Via 12" }
 
-//console.log(findInAgenda(agenda, '600-987'))
+console.log(findInAgenda(agenda, '600-987'))
 // { name: "Maria Gomez", address: "Plaza Mayor 45 Madrid 28013" }
 
-//console.log(findInAgenda(agenda, '111'))
+console.log(findInAgenda(agenda, '111'))
 // null
 // Explanation: No results
 
-//console.log(findInAgenda(agenda, '1'))
+console.log(findInAgenda(agenda, '1'))
 // null
 // Explanation: Too many results
 
