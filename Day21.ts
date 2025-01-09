@@ -1,6 +1,14 @@
-function treeHeight(tree: { value: string; left: any; right: any } | null): number {
+type treeType = { value: string; left: any; right: any } | null
 
-    return 0
+function treeHeight(tree: treeType): number {
+ 
+    if (tree === null) {
+      return 0;
+  }
+
+  const leftHeight = treeHeight(tree.left);
+  const rightHeight = treeHeight(tree.right);
+  return Math.max(leftHeight, rightHeight) + 1;
   }
 
 
