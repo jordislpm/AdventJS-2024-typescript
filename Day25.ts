@@ -1,45 +1,62 @@
 function execute(code: string): number {
-
-    let plus = "+";
-    let less = "-"
-    let skip = ">"
-
-
     let result = 0;
-    for (let index = 0; index < code.length; index++) {
-        const element = code[index];
-
-        switch (element) {
-            case "+":
-                result++
-                break;
-            case "-":
-                result--
-                break;
-            case ">":
-                break;
-            case "[":
-                let start = code.indexOf("[")
-                let end = code.indexOf("]")
-                index =  end
-                result = 0
-            case "{":
-                break;
-            default:
-                break;
-        }    
-        console.log(element)
-        console.log(index)
-
+    const stack: number[] = [];
+  
+    let i = 0;
+    while (i < code.length) {
+      const char = code[i];
+  
+      switch (char) {
+        case "+":
+          result++;
+          break;
+        case "-":
+          result--;
+          break;
+        case "[":
+          if (result === 0) {
+            let loop = 1;
+            while (loop > 0) {
+              i++;
+              if (code[i] === "[") loop++;
+              if (code[i] === "]") loop--;
+            }
+          } else {
+            stack.push(i);
+          }
+          break;
+        case "]":
+          if (result !== 0) {
+            i = stack[stack.length - 1] - 1;
+          } else {
+            stack.pop();
+          }
+          break;
+        case "{":
+          if (result === 0) {
+            let condition = 1;
+            while (condition > 0) {
+              i++;
+              if (code[i] === "{") condition++;
+              if (code[i] === "}") condition--;
+            }
+          }
+          break;
+        default:
+          break;
+      }
+  
+      i++;
     }
-    return result
-}
+  console.log(stack)
+    return result;
+  }
 
 console.log(execute('+++')); // 3
 console.log(execute('+--')); // -1
 console.log(execute('>+++[-]')); // 0
-// console.log(execute('>>>+{++}')); // 3
-// console.log(execute('+{[-]+}+')); // 2
-// console.log(execute('{+}{+}{+}')); // 0
+ console.log(execute('>>>+{++}')); // 3
+ console.log(execute('+{[-]+}+')); // 2
+console.log(execute('{+}{+}{+}')); // 0
 console.log(execute('------[+]++')); // 2
-// console.log(execute('-[++{-}]+{++++}')); // 5
+console.log(execute('-[++{-}]+{++++}')); // 5
